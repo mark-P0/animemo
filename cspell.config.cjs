@@ -1,5 +1,6 @@
 /* prettier-ignore */
 const words = `
+uniqs
 `.trim().split('\n');
 
 /** @type {import('@cspell/cspell-types').CSpellSettings} */
