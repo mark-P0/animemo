@@ -1,29 +1,28 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import BaseCard from './BaseCard.js';
-import { C } from 'src/utilities/react.js';
-
-var char = {
-  mal_id: 1,
-  url: 'https://myanimelist.net/character/1/Spike_Spiegel',
-  images: {
-    jpg: {
-      image_url: 'https://cdn.myanimelist.net/images/characters/4/50197.jpg',
-    },
-    webp: {
-      image_url: 'https://cdn.myanimelist.net/images/characters/4/50197.webp',
-      small_image_url: 'https://cdn.myanimelist.net/images/characters/4/50197t.webp',
-    },
-  },
-  name: 'Spike Spiegel',
-  name_kanji: 'スパイク・スピーゲル',
-  nicknames: [],
-  favorites: 44536,
-  about: null,
-};
+import { Character } from 'src/api/types.js';
+import { getRandomCharacter } from 'src/api/jikan.js';
+import { C, Spinner } from 'src/utilities/react.js';
 
 function Details() {
+  const [char, setChar] = useState<Character | null>(null);
+  useEffect(() => {
+    async function _() {
+      setChar(await getRandomCharacter());
+    }
+    _();
+  }, []);
+
+  if (char === null) {
+    return (
+      <div className="grid place-items-center">
+        <Spinner className="aspect-square w-1/4" />
+      </div>
+    );
+  }
+
   const { name, name_kanji, url } = char;
   const { image_url } = char.images.jpg;
 
