@@ -1,14 +1,16 @@
-import { useState, useEffect, ReactNode } from 'react';
+import { useState, useEffect, ReactNode, TransitionEvent } from 'react';
 import { C } from 'src/utilities/react.js';
 
 export default function BaseCard({
   slideInFrom = 'above',
   slideOutTo,
+  onSlideOutEnd,
   className = '',
   children,
 }: {
   slideInFrom?: 'above' | 'below';
   slideOutTo?: 'left' | 'right';
+  onSlideOutEnd: () => void;
   className?: string;
   children?: ReactNode; // According to cheatsheet (https://react-typescript-cheatsheet.netlify.app/docs/basic/getting-started/basic_type_example/)
 }) {
@@ -24,6 +26,13 @@ export default function BaseCard({
       clearTimeout(timeoutId); // Shouldn't be necessary, but just in case...
     };
   }, []);
+
+  function triggerActionsAfterSlideOut(event: TransitionEvent) {
+    if (slideOutTo === undefined) return;
+    if (event.propertyName !== 'transform') return;
+
+    if (onSlideOutEnd) onSlideOutEnd();
+  }
 
   const classes = C(
     /* Animation */
@@ -52,5 +61,9 @@ export default function BaseCard({
     /* Additional(s) */
     className,
   );
-  return <div className={classes}>{children}</div>;
+  return (
+    <div className={classes} onTransitionEnd={triggerActionsAfterSlideOut}>
+      {children}
+    </div>
+  );
 }
