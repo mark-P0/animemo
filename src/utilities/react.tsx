@@ -7,6 +7,9 @@
  * [`clsx`](https://www.npmjs.com/package/clsx) <!-- cspell:disable-line -->
  * and [`classnames`](https://www.npmjs.com/package/classnames).
  *
+ * If supported, CSS services (e.g. Tailwind's VSCode extension)
+ * can be configured to be enabled within calls to this helper.
+ *
  * Example:
  * ```js
  * const classes = C(

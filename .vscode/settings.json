@@ -1,11 +1,19 @@
 {
   "eslint.experimental.useFlatConfig": true,
   "eslint.options": {
-    /* https://github.com/microsoft/vscode-eslint/issues/1518#issuecomment-1352281966
+    /*  Use CommonJS config file which is not explicitly supported.
+     *  https://github.com/microsoft/vscode-eslint/issues/1518#issuecomment-1352281966
      */
     "overrideConfigFile": "eslint.config.cjs"
   },
   "files.associations": {
     "*.css": "tailwindcss"
-  }
+  },
+  "tailwindCSS.experimental.classRegex": [
+    /*  Enable Tailwind Intellisense within `C()` calls.
+     *  String quotes (') must only appear for string definitions!
+     *  https://stackoverflow.com/questions/66614875/how-can-i-enable-tailwind-intellisense-outside-of-classname
+     */
+    ["(?<=C\\()[\\s\\S]*(?=\\);)", "'([^']*)'"]
+  ]
 }
