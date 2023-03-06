@@ -43,10 +43,9 @@ export default function CharacterCard() {
   const dispatchGameAction = useGameDispatcher();
 
   useEffect(() => {
-    async function _() {
+    (async () => {
       setCharacter(await gameState.currentCharacter);
-    }
-    _();
+    })();
   }, []);
 
   /**
