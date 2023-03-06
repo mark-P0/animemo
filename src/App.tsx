@@ -5,6 +5,7 @@ import { C } from './utilities/react.js';
 
 export default function App() {
   const classes = C(
+    'select-none', // Disable text selection for the whole app
     'overflow-hidden h-screen bg-neutral-700',
     'grid grid-rows-[min-content_1fr]',
     '[&>*]:px-4 sm:[&>*]:px-[10%]', // Pad sides so that they are not too flushed
