@@ -1,12 +1,9 @@
-import { useState } from 'react';
 import CharacterCard from './Cards/CharacterCard.js';
+import { useGameState } from 'src/contexts/GameContext.js';
 import { C } from 'src/utilities/react.js';
 
 export default function Main() {
-  const [ct, setCt] = useState(1);
-  function increaseCt() {
-    setCt(ct + 1);
-  }
+  const { score } = useGameState();
 
   const classes = C(
     'py-6', // Spacer; `px` is set by parent
@@ -15,7 +12,7 @@ export default function Main() {
   );
   return (
     <main className={classes}>
-      <CharacterCard key={ct} onPlayerDecision={increaseCt}></CharacterCard>
+      <CharacterCard key={score.current} />
     </main>
   );
 }

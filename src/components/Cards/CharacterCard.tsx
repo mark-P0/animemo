@@ -35,7 +35,7 @@ function Details({ character }: { character: Character | null }) {
   );
 }
 
-export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: () => void }) {
+export default function CharacterCard() {
   const [character, setCharacter] = useState<Character | null>(null);
   const [hasUserAccepted, setHasUserAccepted] = useState<boolean | null>(null);
   const animationRef = useRef<AnimationCallbacks>(null);
@@ -71,14 +71,12 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
     if (isAccepted) {
       setHasUserAccepted(true);
       animations.slideOut('right', () => {
-        onPlayerDecision();
-        dispatchGameAction({ type: 'accept' });
+        dispatchGameAction({ type: 'accept', payload: character.mal_id });
       });
     } else {
       setHasUserAccepted(false);
       animations.slideOut('left', () => {
-        onPlayerDecision();
-        dispatchGameAction({ type: 'reject' });
+        dispatchGameAction({ type: 'reject', payload: character.mal_id });
       });
     }
   }

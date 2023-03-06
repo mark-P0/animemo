@@ -11,10 +11,16 @@ import { Character } from 'src/api/types.js';
 import { getRandomCharacter } from 'src/api/jikan.js';
 
 type GameState = {
+  status: boolean | null; // `true` === Win | `false` === Lose | `null` === Ongoing
+  score: { current: number; best: number };
+  seenCharacterIds: Character['mal_id'][];
   currentCharacter: Promise<Character>;
 };
 function generateInitialGameState(): GameState {
   return {
+    status: null,
+    score: { current: 0, best: 0 },
+    seenCharacterIds: [],
     currentCharacter: getRandomCharacter(),
   };
 }
@@ -22,12 +28,34 @@ function generateInitialGameState(): GameState {
 const GameStateContext = createContext<GameState | null>(null);
 const GameDispatcherContext = createContext<Dispatch<GameAction> | null>(null);
 
-type GameAction = { type: 'accept'; payload?: null } | { type: 'reject'; payload?: null };
+type GameAction =
+  | { type: 'accept'; payload: Character['mal_id'] }
+  | { type: 'reject'; payload: Character['mal_id'] };
 function reduceGameActions(state: GameState, action: GameAction): GameState {
   const { type } = action;
 
   if (type === 'accept' || type === 'reject') {
-    return { ...state, currentCharacter: getRandomCharacter() };
+    const newState: GameState = { ...state };
+    const { score, seenCharacterIds } = state;
+    const id = action.payload;
+
+    const characterHasAlreadyBeenSeen = seenCharacterIds.includes(id);
+    const validCondition =
+      (characterHasAlreadyBeenSeen && type === 'reject') || // Already-seen characters must be rejected
+      (!characterHasAlreadyBeenSeen && type === 'accept'); // Characters not-yet-seen must be accepted
+    if (validCondition) {
+      const newScore = score.current + 1;
+      newState.score = {
+        current: newScore, // `++` would also work
+        best: newScore > score.best ? newScore : score.best,
+      };
+      newState.seenCharacterIds = [...seenCharacterIds, id];
+      newState.currentCharacter = getRandomCharacter();
+    } else {
+      newState.status = false; // Game is lost if none of the required conditions were met
+    }
+
+    return newState;
   }
 
   throw new Error(`Unknown \`GameAction\` '${type}'`);
