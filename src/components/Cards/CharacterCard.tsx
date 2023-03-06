@@ -2,7 +2,7 @@ import { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import BaseCard, { AnimationCallbacks } from './BaseCard.js';
-import { useGameState } from 'src/contexts/GameContext.js';
+import { useGameState, useGameDispatcher } from 'src/contexts/GameContext.js';
 import { Character } from 'src/api/types.js';
 import { C, Spinner } from 'src/utilities/react.js';
 
@@ -40,6 +40,7 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
   const [hasUserAccepted, setHasUserAccepted] = useState<boolean | null>(null);
   const animationRef = useRef<AnimationCallbacks>(null);
   const gameState = useGameState();
+  const dispatchGameAction = useGameDispatcher();
 
   useEffect(() => {
     async function _() {
@@ -67,12 +68,19 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
     const animations = animationRef.current;
     if (!animations) return;
 
-    setHasUserAccepted(isAccepted);
-
-    const direction = isAccepted ? 'right' : 'left';
-    animations.slideOut(direction, () => {
-      onPlayerDecision();
-    });
+    if (isAccepted) {
+      setHasUserAccepted(true);
+      animations.slideOut('right', () => {
+        onPlayerDecision();
+        dispatchGameAction({ type: 'accept' });
+      });
+    } else {
+      setHasUserAccepted(false);
+      animations.slideOut('left', () => {
+        onPlayerDecision();
+        dispatchGameAction({ type: 'reject' });
+      });
+    }
   }
 
   const buttons = (

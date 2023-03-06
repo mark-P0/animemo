@@ -22,11 +22,11 @@ function generateInitialGameState(): GameState {
 const GameStateContext = createContext<GameState | null>(null);
 const GameDispatcherContext = createContext<Dispatch<GameAction> | null>(null);
 
-type GameAction = { type: 'new-character'; payload?: null };
+type GameAction = { type: 'accept'; payload?: null } | { type: 'reject'; payload?: null };
 function reduceGameActions(state: GameState, action: GameAction): GameState {
   const { type } = action;
 
-  if (type === 'new-character') {
+  if (type === 'accept' || type === 'reject') {
     return { ...state, currentCharacter: getRandomCharacter() };
   }
 
