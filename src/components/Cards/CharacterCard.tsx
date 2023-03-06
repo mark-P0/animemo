@@ -57,16 +57,18 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
   const buttons = (
     <div className="flex justify-evenly py-6">
       <button
-        className="aspect-square bg-neutral-300 rounded-full p-4"
+        className="disabled:opacity-50 aspect-square bg-neutral-300 text-black rounded-full p-4"
         type="button"
         onClick={rejectCard}
+        disabled={character === null || hasUserAccepted !== null}
       >
         <EyeIcon className="min-h-[1rem]" />
       </button>
       <button
-        className="aspect-square bg-neutral-800 text-white rounded-full p-4"
+        className="disabled:opacity-50 aspect-square bg-neutral-800 text-white rounded-full p-4"
         type="button"
         onClick={acceptCard}
+        disabled={character === null || hasUserAccepted !== null}
       >
         <LightBulbIcon className="min-h-[1rem]" />
       </button>
