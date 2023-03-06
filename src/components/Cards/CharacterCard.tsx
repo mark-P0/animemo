@@ -27,7 +27,7 @@ function Details() {
   const { image_url } = char.images.jpg;
 
   return (
-    <div className="overflow-hidden bg-white rounded-md grid grid-rows-[1fr_min-content]">
+    <section className="overflow-hidden bg-white rounded-md grid grid-rows-[1fr_min-content]">
       <a className="overflow-hidden" href={url} target="_blank" rel="noopener noreferrer">
         <img
           className="overflow-hidden h-full w-full object-cover object-top border-4 border-neutral-800"
@@ -36,10 +36,10 @@ function Details() {
         />
       </a>
       <div className="flex items-center justify-between gap-3 p-3">
-        <p className="uppercase tracking-widest text-sm font-semibold">{name}</p>
-        <p className="text-xs text-neutral-500 text-right">{name_kanji}</p>
+        <h2 className="uppercase tracking-widest text-sm font-semibold">{name}</h2>
+        <span className="text-xs text-neutral-500 text-right">{name_kanji}</span>
       </div>
-    </div>
+    </section>
   );
 }
 

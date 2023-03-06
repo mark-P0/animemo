@@ -7,7 +7,9 @@ export default function Header() {
   );
   return (
     <header className={classes}>
-      <code>animemo</code>
+      <h1>
+        <code>animemo</code>
+      </h1>
     </header>
   );
 }
