@@ -30,7 +30,8 @@ const GameDispatcherContext = createContext<Dispatch<GameAction> | null>(null);
 
 type GameAction =
   | { type: 'accept'; payload: Character['mal_id'] }
-  | { type: 'reject'; payload: Character['mal_id'] };
+  | { type: 'reject'; payload: Character['mal_id'] }
+  | { type: 'reset'; payload?: null };
 function reduceGameActions(state: GameState, action: GameAction): GameState {
   const { type } = action;
 
@@ -55,6 +56,12 @@ function reduceGameActions(state: GameState, action: GameAction): GameState {
       newState.status = false; // Game is lost if none of the required conditions were met
     }
 
+    return newState;
+  }
+
+  if (type === 'reset') {
+    const newState = generateInitialGameState();
+    newState.score.best = state.score.best;
     return newState;
   }
 
