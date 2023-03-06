@@ -1,9 +1,10 @@
 import CharacterCard from './Cards/CharacterCard.js';
+import EndCard from './Cards/EndCard.js';
 import { useGameState } from 'src/contexts/GameContext.js';
 import { C } from 'src/utilities/react.js';
 
 export default function Main() {
-  const { score } = useGameState();
+  const { status, score } = useGameState();
 
   const classes = C(
     'py-6', // Spacer; `px` is set by parent
@@ -12,7 +13,9 @@ export default function Main() {
   );
   return (
     <main className={classes}>
-      <CharacterCard key={score.current} />
+      {status === null && <CharacterCard key={score.current} />}
+      {status === false && <EndCard status={false} />}
+      {status === true && <EndCard status={true} />}
     </main>
   );
 }
