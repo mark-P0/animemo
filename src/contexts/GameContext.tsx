@@ -9,8 +9,10 @@
 import { createContext, useContext, useReducer, ReactNode, Dispatch } from 'react';
 import { Character } from 'src/api/types.js';
 import { getRandomCharacter } from 'src/api/jikan.js';
+import { string as rndString } from 'src/utilities/random.js';
 
 type GameState = {
+  stateId: string;
   status: boolean | null; // `true` === Win | `false` === Lose | `null` === Ongoing
   score: { current: number; best: number };
   seenCharacterIds: Character['mal_id'][];
@@ -18,6 +20,7 @@ type GameState = {
 };
 function generateInitialGameState(): GameState {
   return {
+    stateId: rndString(8),
     status: null,
     score: { current: 0, best: 0 },
     seenCharacterIds: [],
@@ -36,7 +39,7 @@ function reduceGameActions(state: GameState, action: GameAction): GameState {
   const { type } = action;
 
   if (type === 'accept' || type === 'reject') {
-    const newState: GameState = { ...state };
+    const newState: GameState = { ...state, stateId: rndString(8) };
     const { score, seenCharacterIds } = state;
     const id = action.payload;
 
@@ -61,7 +64,7 @@ function reduceGameActions(state: GameState, action: GameAction): GameState {
 
   if (type === 'reset') {
     const newState = generateInitialGameState();
-    newState.score.best = state.score.best;
+    newState.score.best = state.score.best; // Retain best scores through resets
     return newState;
   }
 
