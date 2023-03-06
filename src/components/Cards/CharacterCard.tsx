@@ -2,8 +2,8 @@ import { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { EyeIcon } from '@heroicons/react/24/outline';
 import BaseCard, { AnimationCallbacks } from './BaseCard.js';
+import { useGameState } from 'src/contexts/GameContext.js';
 import { Character } from 'src/api/types.js';
-import { getRandomCharacter } from 'src/api/jikan.js';
 import { C, Spinner } from 'src/utilities/react.js';
 
 function Details({ character }: { character: Character | null }) {
@@ -39,10 +39,11 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
   const [character, setCharacter] = useState<Character | null>(null);
   const [hasUserAccepted, setHasUserAccepted] = useState<boolean | null>(null);
   const animationRef = useRef<AnimationCallbacks>(null);
+  const gameState = useGameState();
 
   useEffect(() => {
     async function _() {
-      setCharacter(await getRandomCharacter());
+      setCharacter(await gameState.currentCharacter);
     }
     _();
   }, []);

@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import CharacterCard from './Cards/CharacterCard.js';
+import { useGameDispatcher } from 'src/contexts/GameContext.js';
 import { C } from 'src/utilities/react.js';
 
 export default function Main() {
   const [ct, setCt] = useState(1);
+  const dispatchGameAction = useGameDispatcher();
+
   function increaseCt() {
     setCt(ct + 1);
+    dispatchGameAction({ type: 'new-character' });
   }
 
   const classes = C(
