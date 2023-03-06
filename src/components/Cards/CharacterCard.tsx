@@ -43,7 +43,7 @@ function Details() {
   );
 }
 
-export function CharacterCard({ onPlayerDecision }: { onPlayerDecision: () => void }) {
+export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: () => void }) {
   const [hasUserAccepted, setHasUserAccepted] = useState<boolean | null>(null);
   function rejectCard() {
     setHasUserAccepted(false);

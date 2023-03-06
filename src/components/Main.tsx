@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { CharacterCard } from './Cards/CharacterCard.js';
+import CharacterCard from './Cards/CharacterCard.js';
 import { C } from 'src/utilities/react.js';
 
 export default function Main() {
