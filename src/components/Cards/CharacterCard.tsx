@@ -1,7 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useRef, useLayoutEffect, useEffect, useState } from 'react';
 import { LightBulbIcon } from '@heroicons/react/24/solid';
 import { EyeIcon } from '@heroicons/react/24/outline';
-import BaseCard from './BaseCard.js';
+import BaseCard, { AnimationCallbacks } from './BaseCard.js';
 import { Character } from 'src/api/types.js';
 import { getRandomCharacter } from 'src/api/jikan.js';
 import { C, Spinner } from 'src/utilities/react.js';
@@ -38,6 +38,7 @@ function Details({ character }: { character: Character | null }) {
 export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: () => void }) {
   const [character, setCharacter] = useState<Character | null>(null);
   const [hasUserAccepted, setHasUserAccepted] = useState<boolean | null>(null);
+  const animationRef = useRef<AnimationCallbacks>(null);
 
   useEffect(() => {
     async function _() {
@@ -46,12 +47,31 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
     _();
   }, []);
 
-  function rejectCard() {
-    setHasUserAccepted(false);
-  }
+  /**
+   * Slide in as soon as the component is to be rendered
+   */
+  useLayoutEffect(() => {
+    const animations = animationRef.current;
+    if (animations) animations.slideIn('above');
+  }, []);
 
-  function acceptCard() {
-    setHasUserAccepted(true);
+  function decide(isAccepted: boolean) {
+    /**
+     * Should be impossible to reach this if there is no character,
+     * as the buttons triggering this function should be disabled,
+     * but is still included here for typing.
+     */
+    if (!character) return;
+
+    const animations = animationRef.current;
+    if (!animations) return;
+
+    setHasUserAccepted(isAccepted);
+
+    const direction = isAccepted ? 'right' : 'left';
+    animations.slideOut(direction, () => {
+      onPlayerDecision();
+    });
   }
 
   const buttons = (
@@ -59,7 +79,7 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
       <button
         className="disabled:opacity-50 aspect-square bg-neutral-300 text-black rounded-full p-4"
         type="button"
-        onClick={rejectCard}
+        onClick={() => decide(false)}
         disabled={character === null || hasUserAccepted !== null}
       >
         <EyeIcon className="min-h-[1rem]" />
@@ -67,7 +87,7 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
       <button
         className="disabled:opacity-50 aspect-square bg-neutral-800 text-white rounded-full p-4"
         type="button"
-        onClick={acceptCard}
+        onClick={() => decide(true)}
         disabled={character === null || hasUserAccepted !== null}
       >
         <LightBulbIcon className="min-h-[1rem]" />
@@ -76,9 +96,8 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
   );
 
   const classes = C('grid p-5 pb-0', 'grid-rows-[6fr_1fr] sm:grid-rows-[4fr_1fr]');
-  const outDir = hasUserAccepted === null ? undefined : hasUserAccepted ? 'right' : 'left';
   return (
-    <BaseCard className={classes} slideOutTo={outDir} onSlideOutEnd={onPlayerDecision}>
+    <BaseCard className={classes} animationRef={animationRef}>
       <Details character={character} />
       {buttons}
     </BaseCard>
