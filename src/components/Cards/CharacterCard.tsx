@@ -6,16 +6,8 @@ import { Character } from 'src/api/types.js';
 import { getRandomCharacter } from 'src/api/jikan.js';
 import { C, Spinner } from 'src/utilities/react.js';
 
-function Details() {
-  const [char, setChar] = useState<Character | null>(null);
-  useEffect(() => {
-    async function _() {
-      setChar(await getRandomCharacter());
-    }
-    _();
-  }, []);
-
-  if (char === null) {
+function Details({ character }: { character: Character | null }) {
+  if (character === null) {
     return (
       <div className="grid place-items-center">
         <Spinner className="aspect-square w-1/4" />
@@ -23,8 +15,8 @@ function Details() {
     );
   }
 
-  const { name, name_kanji, url } = char;
-  const { image_url } = char.images.jpg;
+  const { name, name_kanji, url } = character;
+  const { image_url } = character.images.jpg;
 
   return (
     <section className="overflow-hidden bg-white rounded-md grid grid-rows-[1fr_min-content]">
@@ -44,10 +36,20 @@ function Details() {
 }
 
 export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: () => void }) {
+  const [character, setCharacter] = useState<Character | null>(null);
   const [hasUserAccepted, setHasUserAccepted] = useState<boolean | null>(null);
+
+  useEffect(() => {
+    async function _() {
+      setCharacter(await getRandomCharacter());
+    }
+    _();
+  }, []);
+
   function rejectCard() {
     setHasUserAccepted(false);
   }
+
   function acceptCard() {
     setHasUserAccepted(true);
   }
@@ -75,7 +77,7 @@ export default function CharacterCard({ onPlayerDecision }: { onPlayerDecision: 
   const outDir = hasUserAccepted === null ? undefined : hasUserAccepted ? 'right' : 'left';
   return (
     <BaseCard className={classes} slideOutTo={outDir} onSlideOutEnd={onPlayerDecision}>
-      <Details />
+      <Details character={character} />
       {buttons}
     </BaseCard>
   );
