@@ -1,7 +1,7 @@
 import { Character } from './types.js';
 
 /**
- * As of 2023-02-28
+ * As of 2023-03-07
  *
  * https://docs.api.jikan.moe/#tag/characters/operation/getCharactersSearch
  * - https://api.jikan.moe/v4/characters?page=1
@@ -100,11 +100,11 @@ const PREFETCHED_DATA: [number, Character | null][] = [
       url: 'https://myanimelist.net/character/5/Ichigo_Kurosaki',
       images: {
         jpg: {
-          image_url: 'https://cdn.myanimelist.net/images/characters/3/89190.jpg',
+          image_url: 'https://cdn.myanimelist.net/images/characters/12/504680.jpg',
         },
         webp: {
-          image_url: 'https://cdn.myanimelist.net/images/characters/3/89190.webp',
-          small_image_url: 'https://cdn.myanimelist.net/images/characters/3/89190t.webp',
+          image_url: 'https://cdn.myanimelist.net/images/characters/12/504680.webp',
+          small_image_url: 'https://cdn.myanimelist.net/images/characters/12/504680t.webp',
         },
       },
       name: 'Ichigo Kurosaki',
