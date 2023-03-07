@@ -19,6 +19,6 @@ export type Character = {
   name: string;
   name_kanji: string | null;
   nicknames: string[];
-  favorites: number;
+  favorites: number | null;
   about: string | null;
 };
