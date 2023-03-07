@@ -18,15 +18,13 @@ type GameState = {
   seenCharacterIds: Character['mal_id'][];
   currentCharacter: Promise<Character>;
 };
-function generateInitialGameState(): GameState {
-  return {
-    stateId: rndString(8),
-    status: null,
-    score: { current: 0, best: 0 },
-    seenCharacterIds: [],
-    currentCharacter: getRandomCharacter(),
-  };
-}
+const INITIAL_GAME_STATE: GameState = {
+  stateId: rndString(8),
+  status: null,
+  score: { current: 0, best: 0 },
+  seenCharacterIds: [],
+  currentCharacter: getRandomCharacter(),
+};
 
 const GameStateContext = createContext<GameState | null>(null);
 const GameDispatcherContext = createContext<Dispatch<GameAction> | null>(null);
@@ -36,17 +34,19 @@ type GameAction =
   | { type: 'reject'; payload: Character['mal_id'] }
   | { type: 'reset'; payload?: null };
 function reduceGameActions(state: GameState, action: GameAction): GameState {
+  const { score, seenCharacterIds } = state;
   const { type } = action;
+  const stateId = rndString(8);
 
   if (type === 'accept' || type === 'reject') {
-    const newState: GameState = { ...state, stateId: rndString(8) };
-    const { score, seenCharacterIds } = state;
-    const id = action.payload;
+    const newState: GameState = { ...state, stateId };
 
+    const id = action.payload;
     const characterHasAlreadyBeenSeen = seenCharacterIds.includes(id);
     const validCondition =
       (characterHasAlreadyBeenSeen && type === 'reject') || // Already-seen characters must be rejected
       (!characterHasAlreadyBeenSeen && type === 'accept'); // Characters not-yet-seen must be accepted
+
     if (validCondition) {
       const newScore = score.current + 1;
       newState.score = {
@@ -63,8 +63,9 @@ function reduceGameActions(state: GameState, action: GameAction): GameState {
   }
 
   if (type === 'reset') {
-    const newState = generateInitialGameState();
-    newState.score.best = state.score.best; // Retain best scores through resets
+    const newState: GameState = { ...INITIAL_GAME_STATE, stateId };
+    newState.score.best = score.best; // Retain best scores through resets
+    newState.currentCharacter = getRandomCharacter(); // Manually reset character
     return newState;
   }
 
@@ -72,7 +73,7 @@ function reduceGameActions(state: GameState, action: GameAction): GameState {
 }
 
 export function GameProvider({ children }: { children: ReactNode }) {
-  const [game, dispatch] = useReducer(reduceGameActions, generateInitialGameState());
+  const [game, dispatch] = useReducer(reduceGameActions, INITIAL_GAME_STATE);
 
   return (
     <GameDispatcherContext.Provider value={dispatch}>
