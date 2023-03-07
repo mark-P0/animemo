@@ -71,7 +71,7 @@ async function getCharacterById(id: number): Promise<Character | null> {
  * - `extraPct` must be in **decimal form**, e.g. 25% is `0.25`
  * - When `extraPct = 0`, generated IDs will only be those in the `memo`
  */
-function generateDataId(extraPct = 0.5): number {
+function generateDataId(extraPct = 0.25): number {
   const from = 1;
   const to = memo.size * (1 + extraPct);
   const id = rndInteger(from, to);
