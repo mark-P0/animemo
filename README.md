@@ -1,21 +1,11 @@
 # [`animemo`](https://mark-p0.github.io/animemo/)
 
-<style>
-  .underline {
-    text-decoration: underline;
-  }
-
-  .fs-smaller {
-    font-size: smaller;
-  }
-</style>
-
 <details>
   <summary>
-    A <em><span class="underline">memo</span>ry game*</em> using <span class="underline">ani</span>me characters!
+    A <em><span style="text-decoration: underline;">memo</span>ry game*</em> using <span style="text-decoration: underline;">ani</span>me characters!
   </summary>
 
-  <blockquote class="fs-smaller">
+  <blockquote style="font-size: smaller;">
     * Not <a href="https://en.wikipedia.org/wiki/Concentration_(card_game)">Concentration</a>! <br>
     Just remembering the details you have seen before ;)
   </blockquote>
