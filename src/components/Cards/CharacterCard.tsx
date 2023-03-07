@@ -44,7 +44,7 @@ export default function CharacterCard() {
 
   useEffect(() => {
     (async () => {
-      setCharacter(await gameState.currentCharacter);
+      setCharacter(await gameState.character.current);
     })();
   }, []);
 

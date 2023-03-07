@@ -15,15 +15,21 @@ type GameState = {
   stateId: string;
   status: boolean | null; // `true` === Win | `false` === Lose | `null` === Ongoing
   score: { current: number; best: number };
-  seenCharacterIds: Character['mal_id'][];
-  currentCharacter: Promise<Character>;
+  character: {
+    seenIds: Character['mal_id'][];
+    current: Promise<Character>;
+    next: Promise<Character>;
+  };
 };
 const INITIAL_GAME_STATE: GameState = {
   stateId: rndString(8),
   status: null,
   score: { current: 0, best: 0 },
-  seenCharacterIds: [],
-  currentCharacter: getRandomCharacter(),
+  character: {
+    seenIds: [],
+    current: getRandomCharacter(),
+    next: getRandomCharacter(),
+  },
 };
 
 const GameStateContext = createContext<GameState | null>(null);
@@ -34,7 +40,7 @@ type GameAction =
   | { type: 'reject'; payload: Character['mal_id'] }
   | { type: 'reset'; payload?: null };
 function reduceGameActions(state: GameState, action: GameAction): GameState {
-  const { score, seenCharacterIds } = state;
+  const { score, character } = state;
   const { type } = action;
   const stateId = rndString(8);
 
@@ -42,7 +48,7 @@ function reduceGameActions(state: GameState, action: GameAction): GameState {
     const newState: GameState = { ...state, stateId };
 
     const id = action.payload;
-    const characterHasAlreadyBeenSeen = seenCharacterIds.includes(id);
+    const characterHasAlreadyBeenSeen = character.seenIds.includes(id);
     const validCondition =
       (characterHasAlreadyBeenSeen && type === 'reject') || // Already-seen characters must be rejected
       (!characterHasAlreadyBeenSeen && type === 'accept'); // Characters not-yet-seen must be accepted
@@ -53,8 +59,11 @@ function reduceGameActions(state: GameState, action: GameAction): GameState {
         current: newScore, // `++` would also work
         best: newScore > score.best ? newScore : score.best,
       };
-      newState.seenCharacterIds = [...seenCharacterIds, id];
-      newState.currentCharacter = getRandomCharacter();
+      newState.character = {
+        seenIds: [...character.seenIds, id],
+        current: character.next,
+        next: getRandomCharacter(),
+      };
     } else {
       newState.status = false; // Game is lost if none of the required conditions were met
     }
@@ -63,9 +72,19 @@ function reduceGameActions(state: GameState, action: GameAction): GameState {
   }
 
   if (type === 'reset') {
-    const newState: GameState = { ...INITIAL_GAME_STATE, stateId };
-    newState.score.best = score.best; // Retain best scores through resets
-    newState.currentCharacter = getRandomCharacter(); // Manually reset character
+    const newState: GameState = {
+      ...INITIAL_GAME_STATE,
+      stateId,
+      score: {
+        current: 0,
+        best: score.best, // Retain best scores through resets
+      },
+      character: {
+        seenIds: [],
+        current: character.next,
+        next: getRandomCharacter(),
+      },
+    };
     return newState;
   }
 
