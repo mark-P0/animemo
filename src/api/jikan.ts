@@ -12,6 +12,8 @@ const memo = new Map<number, Character | null>(PREFETCHED_DATA);
  * https://docs.api.jikan.moe/#tag/characters/operation/getCharacterById
  */
 async function getCharacterById(id: number): Promise<Character | null> {
+  console.log('Getting', { id });
+
   /**
    * Short-circuit for when the ID data has been memoized (naive cache)
    *
@@ -19,7 +21,10 @@ async function getCharacterById(id: number): Promise<Character | null> {
    * https://github.com/microsoft/TypeScript/issues/13086
    */
   const stored = memo.get(id);
-  if (stored !== undefined) return stored;
+  if (stored !== undefined) {
+    console.log('Data stored', stored);
+    return stored;
+  }
 
   console.warn('Fetching...');
 
@@ -31,18 +36,23 @@ async function getCharacterById(id: number): Promise<Character | null> {
   if (
     status === 429 // Rate-limited; wait for a bit then try again
   ) {
+    console.warn('Rate limited; retrying after a few moments...', response);
     await sleep(1);
-    return await getCharacterById(id);
+    return getCharacterById(id);
   }
   if (
     status === 404 ||
     status !== 200 // Treat codes other than OK as if the data does not exist
   ) {
+    console.warn('No character with that ID', response);
     memo.set(id, null);
     return null;
   }
 
-  const { data }: { data: Character } = await response.json();
+  const json: { data: Character } = await response.json();
+  const { data } = json;
+
+  console.warn('Found character; storing in memo', { response, status, json });
   memo.set(id, data);
   return data;
 }
