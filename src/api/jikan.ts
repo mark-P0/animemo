@@ -49,8 +49,17 @@ async function getCharacterById(id: number): Promise<Character | null> {
     return null;
   }
 
-  const json: { data: Character } = await response.json();
+  const json: { data: Character | undefined } = await response.json();
   const { data } = json;
+
+  /**
+   * Somehow, the API fetch status reads 200 even if
+   * its response body actually displays an error...
+   */
+  if (data === undefined) {
+    console.warn('Somehow no data with status 200?', { response, status, json });
+    return getCharacterById(id);
+  }
 
   console.warn('Found character; storing in memo', { response, status, json });
   memo.set(id, data);
